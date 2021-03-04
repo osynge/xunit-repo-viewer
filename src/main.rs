@@ -2,7 +2,7 @@
 extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
-extern crate xunit_repo;
+extern crate xunit_repo_db;
 mod plumbing;
 mod routes;
 use actix_web::{get, web, HttpRequest, HttpResponse, Result};
@@ -10,16 +10,19 @@ use actix_web::{App, HttpServer};
 use diesel::r2d2::{self, ConnectionManager};
 use diesel::SqliteConnection;
 
-use xunit_repo::db;
-use xunit_repo::model;
-use xunit_repo::schema;
+use xunit_repo_db::db;
+use xunit_repo_db::model;
+use xunit_repo_db::schema;
 
 pub type DbConnection = SqliteConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    let database_pool = db::establish_connection();
+    let database_url = std::env::var("DATABASE_URL").expect("Database not found");
+    let migrate = std::env::var("DATABASE_MIGRATE").is_ok();
+
+    let database_pool = db::establish_connection_pool(&database_url, migrate);
     HttpServer::new(move || {
         App::new()
             .data(database_pool.clone())

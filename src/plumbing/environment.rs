@@ -4,7 +4,7 @@ use diesel::RunQueryDsl;
 use diesel::{dsl::insert_into, query_builder::nodes::Identifier};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use xunit_repo::schema::environment;
+use xunit_repo_db::schema::environment;
 
 pub fn get_all_environments_for_project(
     conn: &DbConnection,

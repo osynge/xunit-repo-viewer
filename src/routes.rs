@@ -8,13 +8,13 @@ use serde::{Deserialize, Serialize};
 pub async fn home() -> Result<HttpResponse, Error> {
     Ok(HttpResponse::build(StatusCode::OK)
         .content_type("text/html; charset=utf-8")
-        .body(include_str!("templates/index.html")))
+        .body(include_str!("../static/index.html")))
 }
 
 pub async fn index_js() -> Result<HttpResponse, Error> {
     Ok(HttpResponse::build(StatusCode::OK)
         .content_type("text/html; charset=utf-8")
-        .body(include_str!("templates/index.js")))
+        .body(include_str!("../static/index.js")))
 }
 
 pub async fn project_get_all(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
