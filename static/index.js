@@ -2,7 +2,7 @@ Vue.component('bill-component', {
   props: ['friend'],
   template: `
     <div>
-    asdasd
+
       <h4>{{ friend.sk }}</h4>
       <h4>{{ friend.identiifier }}</h4>
       <h4>{{ friend.human_name }}</h4>

@@ -1,4 +1,4 @@
-use crate::model::project::{Project, ProjectNew};
+use crate::xunit_repo_db::model::project::{Project, ProjectNew};
 use crate::DbConnection;
 use diesel::prelude::*;
 use diesel::RunQueryDsl;

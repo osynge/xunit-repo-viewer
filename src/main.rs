@@ -1,9 +1,10 @@
 mod configuration;
+mod model;
 mod routes;
 use diesel::r2d2::{self, ConnectionManager};
 use diesel::SqliteConnection;
+use xunit_repo_db;
 use xunit_repo_db::db;
-use xunit_repo_db::model;
 use xunit_repo_db::schema;
 mod plumbing;
 pub type DbConnection = SqliteConnection;
@@ -13,6 +14,11 @@ use actix_web::http::{header, Method, StatusCode};
 use actix_web::{
     error, get, guard, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer, Result,
 };
+use serde::{Deserialize, Serialize};
+#[derive(Deserialize)]
+struct Info {
+    username: String,
+}
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -68,6 +74,10 @@ async fn main() -> std::io::Result<()> {
                     .finish()
             })))
             .route("/v1/project/all", web::get().to(routes::project_get_all))
+            .route(
+                "/v1/run_identifer",
+                web::get().to(routes::run_identifer_get_all),
+            )
     })
     .bind("127.0.0.1:8080")?
     .run()

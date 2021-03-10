@@ -1,31 +1,23 @@
+# xunit-repo-viewer
 
-migrate db:
+## Introduction
 
-rm repo.db src/schema.rs
-diesel migration run
+The xunit-repo-viewer servers junit/[xunit2](https://xunit.net/) results from a local database. The [xunit-repo](https://github.com/osynge/xunit-repo) updates this database from results provided by the [xunit-repo-client](https://github.com/osynge/xunit-repo-client).
 
+xunit-repo-viewer can be configured with environment variables, configuration files, or command line arguments, in order from lowest to highest precedence. xunit-repo-viewer is expected to be used either on the developers desktop, or as part of a continuous integration, continuous deployment framework such as jenkins or drone.
 
-Test commands:
+## Todo:
 
+* Provide more backend functions to query the database.
+* Build a nice front end to display the data.
+* Add logging.
 
-curl -v -X POST -d '{ "sk": "mykey", "identiifier": "identiifier2", "human_name" : "human_name" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/project_add
-curl -v -X POST -d '{  "sk": "f8f1208d-bf03-4daf-b919-ab18c20138b0" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/project_add
+## API Test commands:
 
+Get all projects
 
-curl -v -X POST -d '{  "key": "HOME", "value" : "/home/username" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/keyvalue_add
+    curl -X GET http://127.0.0.1:8080/v1/project/all
 
+Get all run_identifer for project
 
-
-curl -v -X POST -d '{  "key_value": [{  "key": "HOME", "value" : "/home/username" }] }' -H 'Content-Type: application/json' http://127.0.0.1:8888/enviroment_add
-
-
-curl -v -X POST -d '{ "client_identifier" : "1"  }' -H 'Content-Type: application/json' http://127.0.0.1:8888/run_add
-
-curl -v -X POST -d '{ "name" : "name" , "classname" : "classname", "time" : 1, "error_type" : "error_type", "error_message" : "error_message", "error_description" : "error_description", "system_out": "system_out", "system_err" :"system_err" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/test_case_error_add
-
-
-curl -v -X POST -d '{ "name" : "name" , "classname" : "classname", "time" : 1, "failure_type" : "edddddrror_type", "failure_message" : "failure_message", "failure_description" : "failure_description", "system_out": "system_out", "system_err" :"system_err" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/test_case_failure_add
-
-curl -v -X POST -d '{ "name" : "name" , "classname" : "classname", "time" : 1, "skipped_message" : "edddddrror_type" }' -H 'Content-Type: application/json' http://127.0.0.1:8888/test_case_skipped_add
-
-curl -v -X POST -d '{ "name" : "namedddasas" , "classname" : "classnameddddassas", "time" : 1  }' -H 'Content-Type: application/json' http://127.0.0.1:8888/test_case_pass_add
+    curl -X GET "http://127.0.0.1:8080/v1/run_identifer?project_sk=4356e44a-805f-4b70-a5bb-d3883bdf6d8f"
