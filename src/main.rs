@@ -1,6 +1,5 @@
 mod configuration;
 mod routes;
-use actix_web::{web, App, HttpServer};
 use diesel::r2d2::{self, ConnectionManager};
 use diesel::SqliteConnection;
 use xunit_repo_db::db;
@@ -9,6 +8,11 @@ use xunit_repo_db::schema;
 mod plumbing;
 pub type DbConnection = SqliteConnection;
 pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
+use actix_files::Files;
+use actix_web::http::{header, Method, StatusCode};
+use actix_web::{
+    error, get, guard, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer, Result,
+};
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -53,10 +57,16 @@ async fn main() -> std::io::Result<()> {
     };
     HttpServer::new(move || {
         App::new()
+            // static files
             .data(database_pool.clone())
-            /*.service(crate::routes::index)*/
-            .route("/", web::get().to(routes::home))
-            .route("/index.js", web::get().to(routes::index_js))
+            .service(Files::new("/static", "./static/").index_file("index.html"))
+            // redirect
+            .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
+                println!("{:?}", req);
+                HttpResponse::Found()
+                    .header(header::LOCATION, "static/welcome.html")
+                    .finish()
+            })))
             .route("/v1/project/all", web::get().to(routes::project_get_all))
     })
     .bind("127.0.0.1:8080")?
