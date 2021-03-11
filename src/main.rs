@@ -12,7 +12,8 @@ pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
 use actix_files::Files;
 use actix_web::http::{header, Method, StatusCode};
 use actix_web::{
-    error, get, guard, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer, Result,
+    error, get, guard, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer,
+    Responder, Result,
 };
 use serde::{Deserialize, Serialize};
 #[derive(Deserialize)]
@@ -77,6 +78,19 @@ async fn main() -> std::io::Result<()> {
             .route(
                 "/v1/run_identifer",
                 web::get().to(routes::run_identifer_get_all),
+            ) // register favicon
+            .service(routes::favicon)
+            // default
+            .default_service(
+                // 404 for GET request
+                web::resource("")
+                    .route(web::get().to(routes::p404))
+                    // all requests that are not `GET`
+                    .route(
+                        web::route()
+                            .guard(guard::Not(guard::Get()))
+                            .to(HttpResponse::MethodNotAllowed),
+                    ),
             )
     })
     .bind("127.0.0.1:8080")?

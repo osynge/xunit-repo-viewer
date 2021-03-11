@@ -4,9 +4,19 @@ use crate::plumbing::run_identifier::get_run_identifier_with_project;
 use crate::Pool;
 use actix_web::http::StatusCode;
 use actix_web::{get, http, web, Error, HttpRequest, HttpResponse, Result};
-use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
+
+#[get("/favicon.ico")]
+pub(crate) async fn favicon() -> Result<actix_files::NamedFile> {
+    Ok(actix_files::NamedFile::open("static/favicon.ico")?)
+}
+
+/// 404 handler
+pub(crate) async fn p404() -> Result<actix_files::NamedFile> {
+    Ok(actix_files::NamedFile::open("static/404.html")?.set_status_code(StatusCode::NOT_FOUND))
+}
 pub async fn home() -> Result<HttpResponse, Error> {
     Ok(HttpResponse::build(StatusCode::OK)
         .content_type("text/html; charset=utf-8")
