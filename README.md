@@ -25,3 +25,7 @@ Get all run_identifer for project
 Get all test_run for run_identifer
 
     curl -X GET "http://127.0.0.1:8080/v1/test_run?run_identifer_sk=db7d1337-b007-4ed1-a302-9ef0a6704676"
+
+Get all environment for test_run
+
+    curl -X GET "http://127.0.0.1:8080/v1/environment_for_test_run?test_run_sk=8de6df07-5a67-4e2a-8720-9efa91d6e468"

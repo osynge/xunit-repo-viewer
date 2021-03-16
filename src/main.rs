@@ -81,6 +81,9 @@ async fn main() -> std::io::Result<()> {
             ).route(
                 "/v1/test_run",
                 web::get().to(routes::test_run_get_all),
+            ).route(
+                "/v1/environment_for_test_run",
+                web::get().to(routes::environment_get),
             ) // register favicon
             .service(routes::favicon)
             // default

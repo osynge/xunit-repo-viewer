@@ -1,22 +1,36 @@
 use crate::DbConnection;
 use diesel::prelude::*;
+use crate::model::EnvironmentJson;
 use diesel::RunQueryDsl;
 use diesel::{dsl::insert_into, query_builder::nodes::Identifier};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use xunit_repo_db::schema::environment;
 
-pub fn get_all_environments_for_project(
+pub fn get_environment_with_test_run(
     conn: &DbConnection,
-    project_sk: &str,
-) -> Result<Vec<String>, diesel::result::Error> {
-    let result = crate::schema::environment::dsl::environment
-        .inner_join(crate::schema::project::dsl::project)
-        .select(crate::schema::environment::dsl::sk)
-        .filter(crate::schema::project::dsl::sk.eq(project_sk))
-        .load::<String>(conn)?;
+    test_run_sk: &str,
+) -> Result<Vec<EnvironmentJson>, diesel::result::Error> {
+    let tmp = crate::schema::test_run::dsl::test_run
+        .inner_join(crate::schema::environment::dsl::environment)
+        .filter(crate::schema::test_run::dsl::sk.eq(test_run_sk))
+        .select((
+            crate::schema::environment::dsl::sk,
+            crate::schema::environment::dsl::hash_keyvalue,
+        ))
+        .load::<(String, String)>(conn)?;
+    let result = tmp
+        .into_iter()
+        .map(
+            |(new_sk, new_hash_keyvalue)| EnvironmentJson {
+                sk: new_sk,
+                hash_keyvalue: new_hash_keyvalue,
+            },
+        )
+        .collect();
     Ok(result)
 }
+
 
 pub fn get_environments_details(
     conn: &DbConnection,
