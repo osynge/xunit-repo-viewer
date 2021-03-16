@@ -2,7 +2,7 @@ use crate::model;
 use crate::plumbing::project::get_all_project;
 use crate::plumbing::run_identifier::get_run_identifier_with_project;
 use crate::plumbing::test_run::get_test_run_with_run_identifier;
-use crate::plumbing::environment::get_environment_with_test_run;
+use crate::plumbing::environment::{get_environment_with_test_run, get_environments_details};
 use crate::Pool;
 use actix_web::http::StatusCode;
 use actix_web::{get, http, web, Error, HttpRequest, HttpResponse, Result};
@@ -84,6 +84,23 @@ pub async fn environment_get(
     let conn = pool.get().unwrap();
     Ok(
         web::block(move || get_environment_with_test_run(&conn, &parameters.test_run_sk))
+            .await
+            .map(|project| HttpResponse::Created().json(project))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
+}
+
+#[derive(Deserialize)]
+pub struct EnvironmentDetailsParameters {
+    pub environment_sk: String,
+}
+pub async fn environment_details(
+    pool: web::Data<Pool>,
+    parameters: web::Query<EnvironmentDetailsParameters>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(
+        web::block(move || get_environments_details(&conn, &parameters.environment_sk))
             .await
             .map(|project| HttpResponse::Created().json(project))
             .map_err(|_| HttpResponse::InternalServerError())?,
