@@ -21,3 +21,7 @@ Get all projects
 Get all run_identifer for project
 
     curl -X GET "http://127.0.0.1:8080/v1/run_identifer?project_sk=4356e44a-805f-4b70-a5bb-d3883bdf6d8f"
+
+Get all test_run for run_identifer
+
+    curl -X GET "http://127.0.0.1:8080/v1/test_run?run_identifer_sk=db7d1337-b007-4ed1-a302-9ef0a6704676"

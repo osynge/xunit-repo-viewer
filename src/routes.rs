@@ -1,6 +1,7 @@
 use crate::model;
 use crate::plumbing::project::get_all_project;
 use crate::plumbing::run_identifier::get_run_identifier_with_project;
+use crate::plumbing::test_run::get_test_run_with_run_identifier;
 use crate::Pool;
 use actix_web::http::StatusCode;
 use actix_web::{get, http, web, Error, HttpRequest, HttpResponse, Result};
@@ -52,6 +53,24 @@ pub async fn run_identifer_get_all(
             .map_err(|_| HttpResponse::InternalServerError())?,
     )
 }
+
+#[derive(Deserialize)]
+pub struct TestRunParameters {
+    pub run_identifer_sk: String,
+}
+pub async fn test_run_get_all(
+    pool: web::Data<Pool>,
+    parameters: web::Query<TestRunParameters>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(
+        web::block(move || get_test_run_with_run_identifier(&conn, &parameters.run_identifer_sk))
+            .await
+            .map(|project| HttpResponse::Created().json(project))
+            .map_err(|_| HttpResponse::InternalServerError())?,
+    )
+}
+
 
 #[derive(Serialize, Deserialize)]
 struct MyObj {
