@@ -1,7 +1,6 @@
 use std::env;
 
 pub(super) fn cli_env() -> super::configuration::Config {
-    let mut out = super::configuration::Config::new();
     let config_file = env::var("XRV_CONFIG").ok();
     let database_url = env::var("XRV_DATABASE").ok();
     let database_migrate = match env::var("XRV_DATABASE_MIGRATE") {

@@ -1,11 +1,7 @@
-use crate::xunit_repo_db::model::project::{Project, ProjectNew};
 use crate::DbConnection;
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
-use diesel::{dsl::insert_into, query_builder::nodes::Identifier};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-use xunit_repo_db::schema::project::human_name;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProjectJson {

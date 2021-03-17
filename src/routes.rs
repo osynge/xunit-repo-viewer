@@ -1,14 +1,12 @@
-use crate::model;
 use crate::plumbing::environment::{get_environment_with_test_run, get_environments_details};
 use crate::plumbing::project::get_all_project;
 use crate::plumbing::run_identifier::get_run_identifier_with_project;
 use crate::plumbing::test_run::get_test_run_with_run_identifier;
 use crate::Pool;
 use actix_web::http::StatusCode;
-use actix_web::{get, http, web, Error, HttpRequest, HttpResponse, Result};
+use actix_web::{get, web, Error, HttpResponse, Result};
 
-use serde::{Deserialize, Serialize};
-use std::str::FromStr;
+use serde::Deserialize;
 
 #[get("/favicon.ico")]
 pub(crate) async fn favicon() -> Result<actix_files::NamedFile> {
@@ -18,17 +16,6 @@ pub(crate) async fn favicon() -> Result<actix_files::NamedFile> {
 /// 404 handler
 pub(crate) async fn p404() -> Result<actix_files::NamedFile> {
     Ok(actix_files::NamedFile::open("static/404.html")?.set_status_code(StatusCode::NOT_FOUND))
-}
-pub async fn home() -> Result<HttpResponse, Error> {
-    Ok(HttpResponse::build(StatusCode::OK)
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/index.html")))
-}
-
-pub async fn index_js() -> Result<HttpResponse, Error> {
-    Ok(HttpResponse::build(StatusCode::OK)
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../static/index.js")))
 }
 
 pub async fn project_get_all(pool: web::Data<Pool>) -> Result<HttpResponse, Error> {
@@ -105,25 +92,6 @@ pub async fn environment_details(
             .map(|project| HttpResponse::Created().json(project))
             .map_err(|_| HttpResponse::InternalServerError())?,
     )
-}
-
-#[derive(Serialize, Deserialize)]
-struct MyObj {
-    name: String,
-}
-fn get_content_type<'a>(
-    req: &'a HttpRequest,
-) -> Result<std::collections::HashMap<String, String>, ()> {
-    let mut output = std::collections::HashMap::new();
-    for (headername, headervalue) in req.headers().iter() {
-        let hn = headername.to_string();
-        let hv = match headervalue.to_str() {
-            Ok(p) => p,
-            Err(p) => continue,
-        };
-        output.insert(hn.to_string(), hv.to_string());
-    }
-    Ok(output)
 }
 
 #[derive(Deserialize)]

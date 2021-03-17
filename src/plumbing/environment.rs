@@ -2,10 +2,6 @@ use crate::model::EnvironmentJson;
 use crate::DbConnection;
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
-use diesel::{dsl::insert_into, query_builder::nodes::Identifier};
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-use xunit_repo_db::schema::environment;
 
 pub fn get_environment_with_test_run(
     conn: &DbConnection,

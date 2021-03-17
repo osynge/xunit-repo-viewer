@@ -1,6 +1,4 @@
 use crate::model::RunIdentifierJson;
-use crate::schema::project::dsl::project;
-use crate::xunit_repo_db::model::run_identifier;
 use crate::DbConnection;
 use diesel::prelude::*;
 use diesel::query_dsl::QueryDsl;

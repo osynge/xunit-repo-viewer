@@ -1,8 +1,4 @@
 use crate::model::TestFileRunJson;
-use crate::schema::project::dsl::project;
-use crate::xunit_repo_db::model::test_file;
-use crate::xunit_repo_db::model::test_file_run;
-use crate::xunit_repo_db::model::test_run;
 use crate::DbConnection;
 use diesel::prelude::*;
 use diesel::query_dsl::QueryDsl;

@@ -21,7 +21,7 @@ pub(crate) fn configure() -> Result<configuration::Config, ConfigureErr> {
         Some(p) => toml::load_config_from_path_string(p)?,
         None => match toml::load_config_from_default_path() {
             Ok(f) => f,
-            Err(f) => configuration::Config::new(),
+            Err(_) => configuration::Config::new(),
         },
     };
     let cfg = cfg_clap_env.copy_with_default(&cfg_file);
