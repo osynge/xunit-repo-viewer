@@ -37,3 +37,7 @@ Get all environment details
 Get all test_files for test_run
 
     curl -X GET "http://127.0.0.1:8080/v1/test_file_for_test_run?test_run_sk=8de6df07-5a67-4e2a-8720-9efa91d6e468"
+
+Get all test_case_pass for test_file_run
+
+    curl -X GET "http://127.0.0.1:8080/v1/test_case_pass_from_test_file_run?test_file_run_sk=17317178-c79d-4d22-bb24-ab35787dd55a"

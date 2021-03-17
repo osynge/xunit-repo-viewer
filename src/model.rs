@@ -24,3 +24,10 @@ pub struct TestFileRunJson {
     pub directory: String,
     pub file_name: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TestCasePassJson {
+    pub test_case_sk: String,
+    pub name: String,
+    pub time: Option<f32>,
+}
