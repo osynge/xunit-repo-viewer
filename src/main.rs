@@ -78,15 +78,19 @@ async fn main() -> std::io::Result<()> {
             .route(
                 "/v1/run_identifer",
                 web::get().to(routes::run_identifer_get_all),
-            ).route(
-                "/v1/test_run",
-                web::get().to(routes::test_run_get_all),
-            ).route(
+            )
+            .route("/v1/test_run", web::get().to(routes::test_run_get_all))
+            .route(
                 "/v1/environment_for_test_run",
                 web::get().to(routes::environment_get),
-            ).route(
+            )
+            .route(
                 "/v1/environment_details",
                 web::get().to(routes::environment_details),
+            )
+            .route(
+                "/v1/test_file_for_test_run",
+                web::get().to(routes::test_file_run_get),
             )
             // register favicon
             .service(routes::favicon)

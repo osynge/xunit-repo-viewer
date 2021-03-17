@@ -17,3 +17,10 @@ pub struct EnvironmentJson {
     pub sk: String,
     pub hash_keyvalue: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TestFileRunJson {
+    pub sk: String,
+    pub directory: String,
+    pub file_name: String,
+}

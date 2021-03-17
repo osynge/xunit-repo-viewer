@@ -21,12 +21,10 @@ pub fn get_test_run_with_run_identifier(
         .load::<(String, i64)>(conn)?;
     let result = tmp
         .into_iter()
-        .map(
-            |(new_sk, new_created)| TestRunJson {
-                sk: new_sk,
-                created: new_created,
-            },
-        )
+        .map(|(new_sk, new_created)| TestRunJson {
+            sk: new_sk,
+            created: new_created,
+        })
         .collect();
     Ok(result)
 }

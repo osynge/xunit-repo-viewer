@@ -1,8 +1,8 @@
 use crate::model;
+use crate::plumbing::environment::{get_environment_with_test_run, get_environments_details};
 use crate::plumbing::project::get_all_project;
 use crate::plumbing::run_identifier::get_run_identifier_with_project;
 use crate::plumbing::test_run::get_test_run_with_run_identifier;
-use crate::plumbing::environment::{get_environment_with_test_run, get_environments_details};
 use crate::Pool;
 use actix_web::http::StatusCode;
 use actix_web::{get, http, web, Error, HttpRequest, HttpResponse, Result};
@@ -107,8 +107,6 @@ pub async fn environment_details(
     )
 }
 
-
-
 #[derive(Serialize, Deserialize)]
 struct MyObj {
     name: String,
@@ -126,6 +124,27 @@ fn get_content_type<'a>(
         output.insert(hn.to_string(), hv.to_string());
     }
     Ok(output)
+}
+
+#[derive(Deserialize)]
+pub struct TestFileRunGetParameters {
+    pub test_run_sk: String,
+}
+
+pub async fn test_file_run_get(
+    pool: web::Data<Pool>,
+    parameters: web::Query<TestFileRunGetParameters>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(web::block(move || {
+        crate::plumbing::test_file_run::get_test_file_run_with_test_run(
+            &conn,
+            &parameters.test_run_sk,
+        )
+    })
+    .await
+    .map(|project| HttpResponse::Created().json(project))
+    .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
 /*

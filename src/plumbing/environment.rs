@@ -1,6 +1,6 @@
+use crate::model::EnvironmentJson;
 use crate::DbConnection;
 use diesel::prelude::*;
-use crate::model::EnvironmentJson;
 use diesel::RunQueryDsl;
 use diesel::{dsl::insert_into, query_builder::nodes::Identifier};
 use serde::{Deserialize, Serialize};
@@ -21,16 +21,13 @@ pub fn get_environment_with_test_run(
         .load::<(String, String)>(conn)?;
     let result = tmp
         .into_iter()
-        .map(
-            |(new_sk, new_hash_keyvalue)| EnvironmentJson {
-                sk: new_sk,
-                hash_keyvalue: new_hash_keyvalue,
-            },
-        )
+        .map(|(new_sk, new_hash_keyvalue)| EnvironmentJson {
+            sk: new_sk,
+            hash_keyvalue: new_hash_keyvalue,
+        })
         .collect();
     Ok(result)
 }
-
 
 pub fn get_environments_details(
     conn: &DbConnection,

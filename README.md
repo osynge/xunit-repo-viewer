@@ -33,3 +33,7 @@ Get all environments for test_run
 Get all environment details
 
     curl -X GET "http://127.0.0.1:8080/v1/environment_details?environment_sk=1862ef83-0416-4c5d-92c0-a6d089c854f6"
+
+Get all test_files for test_run
+
+    curl -X GET "http://127.0.0.1:8080/v1/test_file_for_test_run?test_run_sk=8de6df07-5a67-4e2a-8720-9efa91d6e468"
