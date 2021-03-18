@@ -92,6 +92,10 @@ async fn main() -> std::io::Result<()> {
                 "/v1/test_case_failure_from_test_file_run",
                 web::get().to(routes::test_case_failure_from_test_file_run),
             )
+            .route(
+                "/v1/test_case_error_from_test_file_run",
+                web::get().to(routes::test_case_error_from_test_file_run),
+            )
             // register favicon
             .service(routes::favicon)
             // default

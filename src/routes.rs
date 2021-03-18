@@ -157,6 +157,27 @@ pub async fn test_case_failure_from_test_file_run(
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
+#[derive(Deserialize)]
+pub struct TestCaseErrorFromTestFileRunGetParameters {
+    pub test_file_run_sk: String,
+}
+
+pub async fn test_case_error_from_test_file_run(
+    pool: web::Data<Pool>,
+    parameters: web::Query<TestCaseErrorFromTestFileRunGetParameters>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(web::block(move || {
+        crate::plumbing::test_case_error::get_test_case_error_with_test_file_run(
+            &conn,
+            &parameters.test_file_run_sk,
+        )
+    })
+    .await
+    .map(|project| HttpResponse::Created().json(project))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
 /*
 #[get("/a/{name}")]
 async fn index(

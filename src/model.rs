@@ -43,3 +43,15 @@ pub struct TestCaseFailureJson {
     pub system_out: Option<String>,
     pub system_err: Option<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TestCaseErrorJson {
+    pub test_case_sk: String,
+    pub name: String,
+    pub time: Option<f32>,
+    pub error_message: Option<String>,
+    pub error_type: Option<String>,
+    pub error_description: Option<String>,
+    pub system_out: Option<String>,
+    pub system_err: Option<String>,
+}

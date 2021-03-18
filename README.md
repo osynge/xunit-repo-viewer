@@ -45,3 +45,7 @@ Get all test_case_pass for test_file_run
 Get all test_case_failure for test_file_run
 
     curl -X GET "http://127.0.0.1:8080/v1/test_case_failure_from_test_file_run?test_file_run_sk=17317178-c79d-4d22-bb24-ab35787dd55a"
+
+Get all test_case_error for test_file_run
+
+    curl -X GET "http://127.0.0.1:8080/v1/test_case_error_from_test_file_run?test_file_run_sk=17317178-c79d-4d22-bb24-ab35787dd55a"
