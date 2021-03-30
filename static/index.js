@@ -10,30 +10,6 @@ Vue.component('button-counter22', {
   template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
 })
 
-Vue.component('bill-component', {
-  props: ['friend'],
-  template: `
-    <div>
-
-      <h4>{{ friend.sk }}</h4>
-      <h4>{{ friend.identiifier }}</h4>
-      <h4>{{ friend.human_name }}</h4>
-      <h4>{{ friend }}</h4>
-      <todo-item
-      v-for="item in friend"
-      v-bind:todo="item"
-      v-bind:key="item.id"
-    ></todo-item>
-    <ol>
-    <li v-for="testsuite in friend">
-      {{ testsuite.sk }}
-      {{ testsuite.identiifier }}
-      {{ testsuite.human_name }}
-        </li>
-        </ol>
-    </div>
-  `
-});
 
 var url = '/v1/project/all';
 
@@ -46,8 +22,9 @@ const app = new Vue({
   data() {
     return {
       data: {
-        'name': {},
-        'project_sk': {}
+        'name': [],
+        'project_sk': 'xxx',
+        'project_hn': '',
       }
     }
   },
@@ -55,6 +32,16 @@ const app = new Vue({
     this.getName();
   },
   methods: {
+    setProjectSk: function (sk) {
+      this.data.project_sk = sk;
+      for (var i = 0, size = this.data.name.length; i < size; i++) {
+        var item = this.data.name[i];
+        if (item.sk == sk) {
+          this.data.project_hn = item.human_name
+        }
+      }
+
+    },
     async getName() {
       const res = await fetch(url);
       const data = await res.json();
@@ -76,8 +63,9 @@ const app = new Vue({
 
   },
   template: `<div>
-      <bill-component :friend="data.name" />
       <button-counter22></button-counter22>
       <button-counter></button-counter>
+      <project-picker :projects="data.name" @select-project="setProjectSk"></project-picker>
+      You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
     </div>`
 })
