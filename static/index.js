@@ -1,3 +1,15 @@
+
+
+
+Vue.component('button-counter22', {
+  data: function () {
+    return {
+      count: 22
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+
 Vue.component('bill-component', {
   props: ['friend'],
   template: `
@@ -33,7 +45,10 @@ const app = new Vue({
   },
   data() {
     return {
-      data: { 'name': {} }
+      data: {
+        'name': {},
+        'project_sk': {}
+      }
     }
   },
   beforeMount() {
@@ -60,11 +75,9 @@ const app = new Vue({
 
 
   },
-  template: `
-    <div>
-      <div><bill-component :friend="data.name" /></div>
-
-    </div>
-
-  `
+  template: `<div>
+      <bill-component :friend="data.name" />
+      <button-counter22></button-counter22>
+      <button-counter></button-counter>
+    </div>`
 })
