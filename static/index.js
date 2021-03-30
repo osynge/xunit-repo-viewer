@@ -1,17 +1,3 @@
-
-
-Vue.component('button-counter22', {
-  data: function () {
-    return {
-      count: 22
-    }
-  },
-  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
-})
-
-
-var url = '/v1/project/all';
-
 const app = new Vue({
   el: "#app",
   created() {
@@ -56,10 +42,8 @@ const app = new Vue({
 
   },
   template: `<div>
-      <button-counter22></button-counter22>
-      <button-counter></button-counter>
       <project-picker :projects="data.list_project" @select-project="setProjectSk"></project-picker>
       You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
       list_run_identifer {{ this.data.list_run_identifer }}.
     </div>`
-})
+});
