@@ -1,6 +1,5 @@
 
 
-
 Vue.component('button-counter22', {
   data: function () {
     return {
@@ -17,55 +16,50 @@ const app = new Vue({
   el: "#app",
   created() {
     console.log('created called.');
-    this.loadAxiosTransactions();
   },
   data() {
     return {
       data: {
-        'name': [],
+        'list_project': [],
         'project_sk': 'xxx',
         'project_hn': '',
+        'list_run_identifer': '',
       }
     }
   },
   beforeMount() {
-    this.getName();
+    this.getProjectList();
   },
   methods: {
     setProjectSk: function (sk) {
       this.data.project_sk = sk;
-      for (var i = 0, size = this.data.name.length; i < size; i++) {
-        var item = this.data.name[i];
+      for (var i = 0, size = this.data.list_project.length; i < size; i++) {
+        var item = this.data.list_project[i];
         if (item.sk == sk) {
           this.data.project_hn = item.human_name
         }
       }
-
+      this.getRunIdentifierList();
     },
-    async getName() {
-      const res = await fetch(url);
+    async getRunIdentifierList() {
+      const lurl = '/v1/run_identifer?project_sk=' + this.data.project_sk;
+      const res = await fetch(lurl);
       const data = await res.json();
-      this.data.name = data;
+      this.data.list_run_identifer = data;
     },
-    loadAxiosTransactions() {
-      fetch(url)
-        .then(function (response) {
-          if (response.status != 200) {
-            console.log(response.status);
-          } else {
-            response.json().then(function (data) {
-              this.response = data;
-            }.bind(this));
-          }
-        }.bind(this))
+    async getProjectList() {
+      const lurl = '/v1/project/all';
+      const res = await fetch(lurl);
+      const data = await res.json();
+      this.data.list_project = data;
     },
-
 
   },
   template: `<div>
       <button-counter22></button-counter22>
       <button-counter></button-counter>
-      <project-picker :projects="data.name" @select-project="setProjectSk"></project-picker>
+      <project-picker :projects="data.list_project" @select-project="setProjectSk"></project-picker>
       You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
+      list_run_identifer {{ this.data.list_run_identifer }}.
     </div>`
 })
