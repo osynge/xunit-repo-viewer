@@ -1,21 +1,13 @@
 Vue.component('project', {
     props: ['sk', 'human_name', 'id'],
-    data() {
-        return {
-            data: {
-                'cart': '',
-            }
-        }
-    },
     methods: {
-        addToCart(item) {
-            this.data.cart = item;
+        selectProject(item) {
             this.$emit('select-project', item);
         }
     },
     template: `
     <div>
-        <button @click="addToCart(sk)">
+        <button @click="selectProject(sk)">
         {{ human_name }}
         </button>
     </div>
@@ -26,14 +18,14 @@ Vue.component('project', {
 Vue.component('project-picker', {
     props: ['projects'],
     methods: {
-        updateCart(e) {
+        selectProject(e) {
             this.$emit('select-project', e);
         }
     },
     template: `
     <div>
           <li v-for="project in projects">
-          <project :sk="project.sk" :human_name="project.human_name" :id="project.identiifier" @select-project="updateCart"></project>
+          <project :sk="project.sk" :human_name="project.human_name" :id="project.identiifier" @select-project="selectProject"></project>
         </li>
     </div>
     `
