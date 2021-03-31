@@ -9,7 +9,7 @@ const app = new Vue({
         'list_project': [],
         'project_sk': 'xxx',
         'project_hn': '',
-        'list_run_identifer': '',
+        'list_run_identifer': [],
       }
     }
   },
@@ -45,5 +45,6 @@ const app = new Vue({
       <project-picker :projects="data.list_project" @select-project="setProjectSk"></project-picker>
       You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
       list_run_identifer {{ this.data.list_run_identifer }}.
+      <run-identifer-picker :run_identifers="data.list_run_identifer"></run-identifer-picker>
     </div>`
 });
