@@ -12,6 +12,7 @@ const app = new Vue({
         'list_run_identifer': [],
         'run_identifer_sk': 'xxx',
         'list_test_run': [],
+        'environment_cache': {},
       }
     }
   },
@@ -34,22 +35,29 @@ const app = new Vue({
       this.getTestRunList();
     },
     async getTestRunList() {
-      const lurl = '/v1/test_run?run_identifer_sk=' + this.data.run_identifer_sk;
-      const res = await fetch(lurl);
-      const data = await res.json();
-      this.data.list_test_run = data;
+      buildRun(this.data.run_identifer_sk);
+      var output = await queryTestRunList(this.data.run_identifer_sk);
+      for (var i = 0, size = output.length; i < size; i++) {
+        console.log('output[i].sk=' + output[i].sk)
+        const sdata = await queryEnvironment(output[i].sk);
+
+        console.log('sdata[0].sk=' + sdata.sk)
+        if (!(sdata.sk in this.data.environment_cache)) {
+          await this.getEnvironmentDetails(sdata.sk);
+        }
+        output[i]['environment'] = this.data.environment_cache[sdata.sk];
+        output[i]['pi'] = await queryEnvironmentDetails(sdata.sk);
+      }
+      this.data.list_test_run = output;
+    },
+    async getEnvironmentDetails(sk) {
+      this.data.environment_cache[sk] = await queryEnvironmentDetails(sk);
     },
     async getRunIdentifierList() {
-      const lurl = '/v1/run_identifer?project_sk=' + this.data.project_sk;
-      const res = await fetch(lurl);
-      const data = await res.json();
-      this.data.list_run_identifer = data;
+      this.data.list_run_identifer = await queryRunIdentifierList(this.data.project_sk);
     },
     async getProjectList() {
-      const lurl = '/v1/project/all';
-      const res = await fetch(lurl);
-      const data = await res.json();
-      this.data.list_project = data;
+      this.data.list_project = await queryProjectsList();
     },
 
   },
@@ -59,5 +67,6 @@ const app = new Vue({
       list_run_identifer {{ this.data.list_run_identifer }}.
       <run-identifer-picker :run_identifers="data.list_run_identifer" @select-run-identifer="setRunIdentifierSk"></run-identifer-picker>
       list_test_run {{ this.data.list_test_run }}.
+      <display-run-identifier :run_identifer_sk="data.run_identifer_sk"></display-run-identifier>
     </div>`
 });

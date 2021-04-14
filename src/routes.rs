@@ -178,6 +178,24 @@ pub async fn test_case_error_from_test_file_run(
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
+#[derive(Deserialize)]
+pub struct TestCaseClassSuiteFromTestCase {
+    pub test_case_sk: String,
+}
+
+pub async fn test_case_class_suite_from_test_case(
+    pool: web::Data<Pool>,
+    parameters: web::Query<TestCaseClassSuiteFromTestCase>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(web::block(move || {
+        crate::plumbing::test_case::get_test_case_class_and_suite(&conn, &parameters.test_case_sk)
+    })
+    .await
+    .map(|project| HttpResponse::Created().json(project))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
 /*
 #[get("/a/{name}")]
 async fn index(

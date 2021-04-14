@@ -1,6 +1,7 @@
 pub(crate) mod environment;
 pub(crate) mod project;
 pub(crate) mod run_identifier;
+pub(crate) mod test_case;
 pub(crate) mod test_case_error;
 pub(crate) mod test_case_failure;
 pub(crate) mod test_case_pass;

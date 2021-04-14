@@ -55,3 +55,9 @@ pub struct TestCaseErrorJson {
     pub system_out: Option<String>,
     pub system_err: Option<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TestCase {
+    pub class: String,
+    pub suite: String,
+}
