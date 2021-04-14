@@ -142,3 +142,120 @@ async function buildRun(run_identifer_sk) {
     console.log('<output>' + JSON.stringify(output));
     return output;
 }
+
+
+
+async function get_test_details_for_test_case(test_case) {
+    return await Promise.all(test_case.map(item => queryTestClass(item.test_case_sk)));
+}
+
+async function get_test_details_for_file(file_list) {
+    return await Promise.all(file_list.map(item => get_test_details_for_test_case(item)));
+}
+
+async function get_fail_list_for_file(file_list) {
+    return await Promise.all(file_list.map(item => queryTestCaseFailList(item.sk)));
+}
+
+async function get_error_list_for_file(file_list) {
+    return await Promise.all(file_list.map(item => queryTestCaseErrorList(item.sk)));
+}
+
+async function get_pass_list_for_file(file_list) {
+    return await Promise.all(file_list.map(item => queryTestCasePassList(item.sk)));
+}
+
+
+function count_cases_file(file) {
+    const cases_file = file.map(item => item.length);
+    return cases_file.reduce((a, b) => a + b, 0)
+}
+
+function count_cases_file_list(file_list) {
+    const cases_file = file_list.map(item => count_cases_file(item));
+    return cases_file.reduce((a, b) => a + b, 0)
+}
+
+function gen_output(run, test_file, test_file_case, test_file_case_details) {
+    output = {
+        'count' : count_cases_file_list(test_file_case)
+    };
+    if (output.count == 0) {
+        return output;
+    }
+    output.run = {};
+    for (var run_counter = 0, run_size = run.length; run_counter < run_size; run_counter++) {
+        const cases_count = count_cases_file(test_file_case[run_counter]);
+        if (cases_count == 0) {
+            continue;
+        };
+        var run_details = {
+            'created' : run[run_counter].created,
+            'files' : {},
+        };
+        for (var file_counter = 0, file_list_size = test_file[run_counter].length; file_counter < file_list_size; file_counter++) {
+            if (test_file_case[run_counter][file_counter].length == 0){
+                continue;
+            }
+            var test_file_details = {
+                'directory' : test_file[run_counter][file_counter].directory,
+                'file_name' : test_file[run_counter][file_counter].file_name,
+                'suite' : {},
+            };
+            for (var case_counter = 0, case_list_size = test_file_case_details[run_counter][file_counter].length; case_counter < case_list_size; case_counter++) {
+                var suite = test_file_case_details[run_counter][file_counter][case_counter].suite;
+                if (!(suite in test_file_details.suite)) {
+                    test_file_details.suite[suite] = { 'class' : {} };
+                };
+                var test_class = test_file_case_details[run_counter][file_counter][case_counter].class;
+                if (!(test_class in test_file_details.suite[suite])) {
+                    test_file_details.suite[suite].class[test_class] = {};
+                }
+                var test_case_output = {};
+                for(var test_case_key in test_file_case[run_counter][file_counter][case_counter]){
+                    if (test_case_key == 'test_case_sk') {
+                        continue;
+                    }
+                    test_case_output[test_case_key] = test_file_case[run_counter][file_counter][case_counter][test_case_key];
+                }
+                var test_case_sk = test_file_case[run_counter][file_counter][case_counter].test_case_sk
+                test_file_details.suite[suite].class[test_class][test_case_sk] = test_case_output;
+            }
+            run_details.files[test_file[run_counter][file_counter].sk] = test_file_details;
+        }
+        output.run[run[run_counter].sk] = run_details;
+    }
+    return output;
+}
+
+async function get_run_list(run_identifer_sk) {
+    const run_list = await queryTestRunList(run_identifer_sk);
+    console.log('<run_list>' + JSON.stringify(run_list));
+    var environment_key = run_list.map(item => queryEnvironment(item.sk));
+    var test_file_list = await Promise.all(run_list.map(item => queryTestFileList(item.sk)));
+    var test_file_list_pass = await Promise.all(test_file_list.map(item => get_pass_list_for_file(item)));
+    var test_file_list_error = await Promise.all(test_file_list.map(item => get_error_list_for_file(item)));
+    var test_file_list_fail = await Promise.all(test_file_list.map(item => get_fail_list_for_file(item)));
+    var test_file_list_pass_details = await Promise.all(test_file_list_pass.map(item => get_test_details_for_file(item)));
+    var test_file_list_error_details = await Promise.all(test_file_list_error.map(item => get_test_details_for_file(item)));
+    var test_file_list_fail_details = await Promise.all(test_file_list_fail.map(item => get_test_details_for_file(item)));
+    var pass_count = count_cases_file_list(test_file_list_pass);
+    var error_count = count_cases_file_list(test_file_list_error);
+    var fail_count = count_cases_file_list(test_file_list_fail);
+    /*console.log('<test_file_list>' + JSON.stringify(test_file_list));
+    console.log('<test_file_list_pass>' + JSON.stringify(test_file_list_pass));
+    console.log('<test_file_list_error>' + JSON.stringify(test_file_list_error));
+    console.log('<test_file_list_fail>' + JSON.stringify(test_file_list_fail));
+    console.log('<test_file_list_pass_details>' + JSON.stringify(test_file_list_pass_details));
+    console.log('<test_file_list_fail_details>' + JSON.stringify(test_file_list_fail_details));
+    console.log('<pass_count>' + JSON.stringify(pass_count));
+    console.log('<error_count>' + JSON.stringify(error_count));
+    console.log('<fail_count>' + JSON.stringify(fail_count));
+    */
+
+    return {
+        'error' : gen_output(run_list, test_file_list, test_file_list_error, test_file_list_error_details),
+        'fail' : gen_output(run_list, test_file_list, test_file_list_fail, test_file_list_fail_details),
+        'pass' : gen_output(run_list, test_file_list, test_file_list_pass, test_file_list_pass_details),
+    };
+}
