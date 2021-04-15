@@ -3,7 +3,7 @@ Vue.component('display-test', {
     props: ['results', 'sk'],
     template: `
     <div>
-        <h5>display-project-test {{name}}</h5>
+        <h5>display-project-test {{results.name}}</h5>
         <table>
         <tr>
         <td>Key</td>

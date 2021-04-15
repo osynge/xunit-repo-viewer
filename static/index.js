@@ -13,7 +13,7 @@ const app = new Vue({
         'run_identifer_sk': 'xxx',
         'list_test_run': [],
         'environment_cache': {},
-        'project_run_test_results': {},
+        'project_run_test_results': null,
       }
     }
   },
@@ -66,9 +66,10 @@ const app = new Vue({
   template: `<div>
       <project-picker :projects="data.list_project" @select-project="setProjectSk"></project-picker>
       You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
-      list_run_identifer {{ this.data.list_run_identifer }}.
       <run-identifer-picker :run_identifers="data.list_run_identifer" @select-run-identifer="setRunIdentifierSk"></run-identifer-picker>
       <display-run-identifier :run_identifer_sk="data.run_identifer_sk"></display-run-identifier>
+      <div v-if="data.project_run_test_results">
       <display-project-run-test-results :test_results="data.project_run_test_results"></display-project-run-test-results>
+      </div>
     </div>`
 });
