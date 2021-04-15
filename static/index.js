@@ -38,7 +38,6 @@ const app = new Vue({
     async getTestRunList() {
       this.data.project_run_test_results = await get_run_list(this.data.run_identifer_sk);
       console.log('<this.data.project_run_test_results>' + JSON.stringify(this.data.project_run_test_results));
-      //buildRun(this.data.run_identifer_sk);
       var output = await queryTestRunList(this.data.run_identifer_sk);
       for (var i = 0, size = output.length; i < size; i++) {
         console.log('output[i].sk=' + output[i].sk)
