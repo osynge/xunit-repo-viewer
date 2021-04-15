@@ -13,6 +13,7 @@ const app = new Vue({
         'run_identifer_sk': 'xxx',
         'list_test_run': [],
         'environment_cache': {},
+        'project_run_test_results': {},
       }
     }
   },
@@ -35,8 +36,8 @@ const app = new Vue({
       this.getTestRunList();
     },
     async getTestRunList() {
-      var get_run_list_out = await get_run_list(this.data.run_identifer_sk);
-      console.log('output get_run_list=' + JSON.stringify(get_run_list_out));
+      this.data.project_run_test_results = await get_run_list(this.data.run_identifer_sk);
+      console.log('<this.data.project_run_test_results>' + JSON.stringify(this.data.project_run_test_results));
       //buildRun(this.data.run_identifer_sk);
       var output = await queryTestRunList(this.data.run_identifer_sk);
       for (var i = 0, size = output.length; i < size; i++) {
@@ -68,7 +69,7 @@ const app = new Vue({
       You selected project {{ this.data.project_sk }} {{this.data.project_hn}}.
       list_run_identifer {{ this.data.list_run_identifer }}.
       <run-identifer-picker :run_identifers="data.list_run_identifer" @select-run-identifer="setRunIdentifierSk"></run-identifer-picker>
-      list_test_run {{ this.data.list_test_run }}.
       <display-run-identifier :run_identifer_sk="data.run_identifer_sk"></display-run-identifier>
+      <display-project-run-test-results :test_results="data.project_run_test_results"></display-project-run-test-results>
     </div>`
 });

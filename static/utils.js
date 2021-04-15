@@ -202,13 +202,16 @@ function gen_output(run, test_file, test_file_case, test_file_case_details) {
                 'file_name' : test_file[run_counter][file_counter].file_name,
                 'suite' : {},
             };
-            for (var case_counter = 0, case_list_size = test_file_case_details[run_counter][file_counter].length; case_counter < case_list_size; case_counter++) {
+            var case_list_size = test_file_case_details[run_counter][file_counter].length;
+            console.log('<case_list_size>' + JSON.stringify(case_list_size));
+            for (var case_counter = 0; case_counter < case_list_size; case_counter++) {
+
                 var suite = test_file_case_details[run_counter][file_counter][case_counter].suite;
                 if (!(suite in test_file_details.suite)) {
                     test_file_details.suite[suite] = { 'class' : {} };
                 };
                 var test_class = test_file_case_details[run_counter][file_counter][case_counter].class;
-                if (!(test_class in test_file_details.suite[suite])) {
+                if (!(test_class in test_file_details.suite[suite].class)) {
                     test_file_details.suite[suite].class[test_class] = {};
                 }
                 var test_case_output = {};
@@ -218,6 +221,7 @@ function gen_output(run, test_file, test_file_case, test_file_case_details) {
                     }
                     test_case_output[test_case_key] = test_file_case[run_counter][file_counter][case_counter][test_case_key];
                 }
+
                 var test_case_sk = test_file_case[run_counter][file_counter][case_counter].test_case_sk
                 test_file_details.suite[suite].class[test_class][test_case_sk] = test_case_output;
             }
@@ -244,10 +248,12 @@ async function get_run_list(run_identifer_sk) {
     var fail_count = count_cases_file_list(test_file_list_fail);
     /*console.log('<test_file_list>' + JSON.stringify(test_file_list));
     console.log('<test_file_list_pass>' + JSON.stringify(test_file_list_pass));
+    */
     console.log('<test_file_list_error>' + JSON.stringify(test_file_list_error));
     console.log('<test_file_list_fail>' + JSON.stringify(test_file_list_fail));
     console.log('<test_file_list_pass_details>' + JSON.stringify(test_file_list_pass_details));
     console.log('<test_file_list_fail_details>' + JSON.stringify(test_file_list_fail_details));
+    /*
     console.log('<pass_count>' + JSON.stringify(pass_count));
     console.log('<error_count>' + JSON.stringify(error_count));
     console.log('<fail_count>' + JSON.stringify(fail_count));
