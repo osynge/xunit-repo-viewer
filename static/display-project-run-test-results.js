@@ -65,6 +65,16 @@ Vue.component('display-project-run-test-results-run', {
     template: `
     <div>
         <h1>display-project-run-test-results-run</h1>
+        <table>
+        <tr>
+        <td>Key</td>
+        <td>Value</td>
+        </tr>
+        <tr v-for="(value, propertyName) in results.environment">
+            <td>{{propertyName}}</td>
+            <td>{{value}}</td>
+        </tr>
+        </table>
         <span v-for="item in results.files">
             <display-project-file :results="item"> </display-project-file>
         </span>

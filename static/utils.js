@@ -87,9 +87,9 @@ function count_cases_file_list(file_list) {
     return cases_file.reduce((a, b) => a + b, 0)
 }
 
-function gen_output(run, test_file, test_file_case, test_file_case_details) {
+function gen_output(run, environment, test_file, test_file_case, test_file_case_details) {
     output = {
-        'count' : count_cases_file_list(test_file_case)
+        'count': count_cases_file_list(test_file_case)
     };
     if (output.count == 0) {
         return output;
@@ -101,17 +101,18 @@ function gen_output(run, test_file, test_file_case, test_file_case_details) {
             continue;
         };
         var run_details = {
-            'created' : run[run_counter].created,
-            'files' : {},
+            'created': run[run_counter].created,
+            'environment': environment[run_counter],
+            'files': {},
         };
         for (var file_counter = 0, file_list_size = test_file[run_counter].length; file_counter < file_list_size; file_counter++) {
-            if (test_file_case[run_counter][file_counter].length == 0){
+            if (test_file_case[run_counter][file_counter].length == 0) {
                 continue;
             }
             var test_file_details = {
-                'directory' : test_file[run_counter][file_counter].directory,
-                'file_name' : test_file[run_counter][file_counter].file_name,
-                'suite' : {},
+                'directory': test_file[run_counter][file_counter].directory,
+                'file_name': test_file[run_counter][file_counter].file_name,
+                'suite': {},
             };
             var case_list_size = test_file_case_details[run_counter][file_counter].length;
             console.log('<case_list_size>' + JSON.stringify(case_list_size));
@@ -119,14 +120,14 @@ function gen_output(run, test_file, test_file_case, test_file_case_details) {
 
                 var suite = test_file_case_details[run_counter][file_counter][case_counter].suite;
                 if (!(suite in test_file_details.suite)) {
-                    test_file_details.suite[suite] = { 'class' : {} };
+                    test_file_details.suite[suite] = { 'class': {} };
                 };
                 var test_class = test_file_case_details[run_counter][file_counter][case_counter].class;
                 if (!(test_class in test_file_details.suite[suite].class)) {
                     test_file_details.suite[suite].class[test_class] = {};
                 }
                 var test_case_output = {};
-                for(var test_case_key in test_file_case[run_counter][file_counter][case_counter]){
+                for (var test_case_key in test_file_case[run_counter][file_counter][case_counter]) {
                     if (test_case_key == 'test_case_sk') {
                         continue;
                     }
@@ -146,7 +147,8 @@ function gen_output(run, test_file, test_file_case, test_file_case_details) {
 async function get_run_list(run_identifer_sk) {
     const run_list = await queryTestRunList(run_identifer_sk);
     console.log('<run_list>' + JSON.stringify(run_list));
-    var environment_key = run_list.map(item => queryEnvironment(item.sk));
+    var environment_key = await Promise.all(run_list.map(item => queryEnvironment(item.sk)));
+    var environment_details = await Promise.all(environment_key.map(item => queryEnvironmentDetails(item.sk)));
     var test_file_list = await Promise.all(run_list.map(item => queryTestFileList(item.sk)));
     var test_file_list_pass = await Promise.all(test_file_list.map(item => get_pass_list_for_file(item)));
     var test_file_list_error = await Promise.all(test_file_list.map(item => get_error_list_for_file(item)));
@@ -157,6 +159,7 @@ async function get_run_list(run_identifer_sk) {
     var pass_count = count_cases_file_list(test_file_list_pass);
     var error_count = count_cases_file_list(test_file_list_error);
     var fail_count = count_cases_file_list(test_file_list_fail);
+    console.log('<environment_key>' + JSON.stringify(environment_key));
     /*console.log('<test_file_list>' + JSON.stringify(test_file_list));
     console.log('<test_file_list_pass>' + JSON.stringify(test_file_list_pass));
     */
@@ -171,8 +174,8 @@ async function get_run_list(run_identifer_sk) {
     */
 
     return {
-        'error' : gen_output(run_list, test_file_list, test_file_list_error, test_file_list_error_details),
-        'fail' : gen_output(run_list, test_file_list, test_file_list_fail, test_file_list_fail_details),
-        'pass' : gen_output(run_list, test_file_list, test_file_list_pass, test_file_list_pass_details),
+        'error': gen_output(run_list, environment_details, test_file_list, test_file_list_error, test_file_list_error_details),
+        'fail': gen_output(run_list, environment_details, test_file_list, test_file_list_fail, test_file_list_fail_details),
+        'pass': gen_output(run_list, environment_details, test_file_list, test_file_list_pass, test_file_list_pass_details),
     };
 }
