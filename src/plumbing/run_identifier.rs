@@ -16,6 +16,7 @@ pub fn get_run_identifier_with_project(
             crate::schema::run_identifier::dsl::client_identifier,
             crate::schema::run_identifier::dsl::created,
         ))
+        .order(crate::schema::run_identifier::dsl::created.desc())
         .load::<(String, String, i64)>(conn)?;
     let result = tmp
         .into_iter()
