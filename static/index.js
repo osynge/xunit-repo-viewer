@@ -1,7 +1,17 @@
 const app = new Vue({
   el: "#app",
   created() {
-    console.log('created called.');
+    let uri = window.location.search.substring(1);
+    let params = new URLSearchParams(uri);
+    let project = params.get("project");
+    if (project != "") {
+      this.data.project_sk = project;
+      this.setProjectSk(project);
+    }
+    let run = params.get("run");
+    if (run != "") {
+      this.setRunIdentifierSk(run);
+    }
   },
   data() {
     return {
