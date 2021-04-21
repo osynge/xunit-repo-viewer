@@ -97,6 +97,10 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(routes::test_case_error_from_test_file_run),
             )
             .route(
+                "/v1/test_case_skip_from_test_file_run",
+                web::get().to(routes::test_case_skip_from_test_file_run),
+            )
+            .route(
                 "/v1/test_case_class_suite_from_test_case",
                 web::get().to(routes::test_case_class_suite_from_test_case),
             )

@@ -57,6 +57,14 @@ pub struct TestCaseErrorJson {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct TestCaseSkipJson {
+    pub test_case_sk: String,
+    pub name: String,
+    pub time: Option<f32>,
+    pub skip_message: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TestCase {
     pub class: String,
     pub suite: String,

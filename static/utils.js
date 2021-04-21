@@ -46,6 +46,10 @@ async function queryTestCaseErrorList(sk) {
     return queryUrl('/v1/test_case_error_from_test_file_run?test_file_run_sk=' + sk);
 };
 
+async function queryTestCaseSkipList(sk) {
+    return queryUrl('/v1/test_case_skip_from_test_file_run?test_file_run_sk=' + sk);
+};
+
 var test_class_store = {};
 
 async function queryTestClass(sk) {
@@ -74,6 +78,10 @@ async function get_error_list_for_file(file_list) {
 
 async function get_pass_list_for_file(file_list) {
     return await Promise.all(file_list.map(item => queryTestCasePassList(item.sk)));
+}
+
+async function get_skip_list_for_file(file_list) {
+    return await Promise.all(file_list.map(item => queryTestCaseSkipList(item.sk)));
 }
 
 
@@ -153,9 +161,11 @@ async function get_run_list(run_identifer_sk) {
     var test_file_list_pass = await Promise.all(test_file_list.map(item => get_pass_list_for_file(item)));
     var test_file_list_error = await Promise.all(test_file_list.map(item => get_error_list_for_file(item)));
     var test_file_list_fail = await Promise.all(test_file_list.map(item => get_fail_list_for_file(item)));
+    var test_file_list_skip = await Promise.all(test_file_list.map(item => get_skip_list_for_file(item)));
     var test_file_list_pass_details = await Promise.all(test_file_list_pass.map(item => get_test_details_for_file(item)));
     var test_file_list_error_details = await Promise.all(test_file_list_error.map(item => get_test_details_for_file(item)));
     var test_file_list_fail_details = await Promise.all(test_file_list_fail.map(item => get_test_details_for_file(item)));
+    var test_file_list_skip_details = await Promise.all(test_file_list_skip.map(item => get_test_details_for_file(item)));
     var pass_count = count_cases_file_list(test_file_list_pass);
     var error_count = count_cases_file_list(test_file_list_error);
     var fail_count = count_cases_file_list(test_file_list_fail);
@@ -177,5 +187,6 @@ async function get_run_list(run_identifer_sk) {
         'error': gen_output(run_list, environment_details, test_file_list, test_file_list_error, test_file_list_error_details),
         'fail': gen_output(run_list, environment_details, test_file_list, test_file_list_fail, test_file_list_fail_details),
         'pass': gen_output(run_list, environment_details, test_file_list, test_file_list_pass, test_file_list_pass_details),
+        'skip': gen_output(run_list, environment_details, test_file_list, test_file_list_skip, test_file_list_skip_details),
     };
 }

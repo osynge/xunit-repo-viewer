@@ -103,13 +103,16 @@ Vue.component('display-project-run-test-results', {
         <table>
             <tr>
             <td>
-            Pass
+            Passes
             </td>
             <td>
-            Fail
+            Fails
             </td>
             <td>
-            Error
+            Errors
+            </td>
+            <td>
+            Skipped
             </td>
             <td>
             Total
@@ -126,7 +129,10 @@ Vue.component('display-project-run-test-results', {
             {{test_results.error.count}}
             </td>
             <td>
-            {{test_results.fail.count + test_results.pass.count + test_results.error.count}}
+            {{test_results.skip.count}}
+            </td>
+            <td>
+            {{test_results.fail.count + test_results.pass.count + test_results.error.count + test_results.skip.count}}
             </td>
             </tr>
         </table>
@@ -137,6 +143,10 @@ Vue.component('display-project-run-test-results', {
         Errors:
         <div>
         <display-project-run-test-results-type :results="test_results.error"></display-project-run-test-results-type>
+        </div>
+        Skipped:
+        <div>
+        <display-project-run-test-results-type :results="test_results.skip"></display-project-run-test-results-type>
         </div>
         Pass:
         <div>

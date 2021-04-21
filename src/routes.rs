@@ -179,6 +179,27 @@ pub async fn test_case_error_from_test_file_run(
 }
 
 #[derive(Deserialize)]
+pub struct TestCaseSkipFromTestFileRunGetParameters {
+    pub test_file_run_sk: String,
+}
+
+pub async fn test_case_skip_from_test_file_run(
+    pool: web::Data<Pool>,
+    parameters: web::Query<TestCaseSkipFromTestFileRunGetParameters>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    Ok(web::block(move || {
+        crate::plumbing::test_case_skip::get_test_case_skip_with_test_file_run(
+            &conn,
+            &parameters.test_file_run_sk,
+        )
+    })
+    .await
+    .map(|project| HttpResponse::Created().json(project))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
+#[derive(Deserialize)]
 pub struct TestCaseClassSuiteFromTestCase {
     pub test_case_sk: String,
 }
