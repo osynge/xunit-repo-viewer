@@ -6,13 +6,35 @@ The xunit-repo-viewer servers junit/[xunit2](https://xunit.net/) results from a 
 
 xunit-repo-viewer can be configured with environment variables, configuration files, or command line arguments, in order from lowest to highest precedence. xunit-repo-viewer is expected to be used either on the developers desktop, or as part of a continuous integration, continuous deployment framework such as jenkins or drone.
 
-## Todo:
+## Features
 
+* Aggregate all your xunit test results, from multiple projects and files in one web site.
+* Browse old and new builds.
+* See your test errors, failures, and skipped tests before your test passes.
+* Support multi environment builds, eg. parallel builds across operating system and architecture.
+* Uses a relational database of your test results, so each build uses less disk space.
+* Logging can be traditional line based or json.
+* Easy to monitor with prometheus metrics.
+
+### Table of xunit-repo-client configuration
+
+Setting | Type | Environment variable | Configuration parameter | Command line argument
+------- | ---- | -------------------- | ----------------------- | ---------------------
+Database URL | String | XRV_DATABASE | database_url | --database-url
+Migrate database | Boolean | XRV_DATABASE_MIGRATE | database_migrate | --database-migrate --no-database-migrate
+Host | String | XRV_HOST | host | --host
+Port | Integer | XRV_PORT | port | --port
+Configuration file | String | XRV_CONFIG || --config
+Log level| Integer | XRV_LOG_LEVEL | loglevel | -v --verbose -q --quiet
+Log in json | Boolean | XRV_LOG_JSON | json_logs | --json-logging --line-logging
+
+## Todo
+
+* Provide a bulk test_case_class_suite_from_test_case.
 * Provide more backend functions to query the database.
-* Build a nice front end to display the data.
-* Add logging.
+* Build a nice front end to display the data better.
 
-## API Test commands:
+## API Test commands
 
 Get all projects
 

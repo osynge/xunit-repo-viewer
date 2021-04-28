@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct Config {
     pub(crate) config_file: Option<String>,
+    pub(crate) log_in_json: Option<bool>,
     pub(crate) log_level: Option<i8>,
     pub(crate) database_url: Option<String>,
     pub(crate) database_migrate: Option<bool>,
@@ -13,6 +14,7 @@ impl Config {
     pub(super) fn new() -> Config {
         Config {
             config_file: None,
+            log_in_json: None,
             log_level: None,
             database_url: None,
             database_migrate: None,
@@ -29,6 +31,7 @@ impl Config {
             Some(p) => Some(p.clone()),
             None => None,
         };
+        let log_in_json = self.log_in_json.or_else(|| src.log_in_json);
         let log_level = self.log_level.or_else(|| src.log_level);
         let database_url = match self
             .database_url
@@ -46,6 +49,7 @@ impl Config {
         let port = self.port.or_else(|| src.port);
         Config {
             config_file,
+            log_in_json,
             log_level,
             database_url,
             database_migrate,
