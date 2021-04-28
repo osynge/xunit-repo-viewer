@@ -1,0 +1,33 @@
+FROM ekidd/rust-musl-builder:stable as builder
+
+WORKDIR /app
+ADD --chown=rust:rust . /app/xunit-repo-viewer
+WORKDIR /app/xunit-repo-viewer
+RUN rm -rf target Cargo.lock
+RUN cargo build --release --features=libsqlite3-sys
+
+FROM alpine:latest
+
+ARG APP=/usr/src/app
+
+EXPOSE 8000
+
+ENV TZ=Etc/UTC \
+    APP_USER=appuser
+
+RUN addgroup -S $APP_USER \
+    && adduser -S -g $APP_USER $APP_USER
+
+RUN apk update \
+    && apk add --no-cache ca-certificates tzdata \
+    && rm -rf /var/cache/apk/*
+
+COPY --from=builder /app/xunit-repo-viewer/target/x86_64-unknown-linux-musl/release/xunit_repo_viewer ${APP}/xunit_repo_viewer
+
+RUN chown -R $APP_USER:$APP_USER ${APP}
+
+USER $APP_USER
+WORKDIR ${APP}
+ADD --chown=$APP_USER:$APP_USER static static
+
+CMD ["./xunit_repo_viewer"]
