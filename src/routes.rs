@@ -217,6 +217,20 @@ pub async fn test_case_class_suite_from_test_case(
     .map_err(|_| HttpResponse::InternalServerError())?)
 }
 
+pub async fn test_case_class_suite_list_from_test_case_list(
+    pool: web::Data<Pool>,
+    item: web::Json<Vec<String>>,
+) -> Result<HttpResponse, Error> {
+    let conn = pool.get().unwrap();
+    let test_case_list = item.into_inner();
+    Ok(web::block(move || {
+        crate::plumbing::test_case::get_test_case_list_class_and_suite(&conn, &test_case_list)
+    })
+    .await
+    .map(|project| HttpResponse::Created().json(project))
+    .map_err(|_| HttpResponse::InternalServerError())?)
+}
+
 /*
 #[get("/a/{name}")]
 async fn index(

@@ -57,7 +57,7 @@ const app = new Vue({
         if (!(sdata.sk in this.data.environment_cache)) {
           await this.getEnvironmentDetails(sdata.sk);
         }
-        output[i]['environment'] = this.data.environment_cache[sdata.sk];
+        output[i]['environment'] = await this.data.environment_cache[sdata.sk];
         output[i]['pi'] = await queryEnvironmentDetails(sdata.sk);
       }
       this.data.list_test_run = output;

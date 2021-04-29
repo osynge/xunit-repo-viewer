@@ -60,7 +60,57 @@ async function queryTestClass(sk) {
     return test_class_store[sk];
 };
 
+
+async function queryTestClassList(sk_list) {
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(sk_list),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    console.log('<sk_list>' + JSON.stringify(sk_list));
+    const res = await fetch('/v1/test_case_class_suite_list_from_test_case_list', options);
+    const res_json = await res.json();
+    if (sk_list.length != res_json.length) {
+        return 'failed'
+    }
+    for (var i = 0; i < res_json.length; ++i) {
+        test_class_store[sk_list[i]] = res_json[i];
+    }
+    return 'success'
+};
+
+
+
+async function queryTestClass_list(sk) {
+    if (sk in test_class_store) {
+        return test_class_store[sk];
+    }
+    test_class_store[sk] = queryUrl('/v1/test_case_class_suite_from_test_case?test_case_sk=' + sk);
+    return test_class_store[sk];
+};
+
+
+function TestClass_reduce_not_cached(accumulator, currentValue) {
+    if (currentValue in test_class_store) {
+        return accumulator;
+    }
+    accumulator.push(currentValue);
+    return accumulator;
+};
+
 async function get_test_details_for_test_case(test_case) {
+    if (test_case.length > 0) {
+        const foo = test_case.map(item => item.test_case_sk);
+        console.log('<foo>' + JSON.stringify(foo));
+        const bar = foo.reduce(TestClass_reduce_not_cached, []);
+        console.log('<bar>' + JSON.stringify(bar));
+        if (bar.length > 0) {
+            const jim = await queryTestClassList(bar);
+            console.log('<jim>' + JSON.stringify(jim));
+        }
+    }
     return await Promise.all(test_case.map(item => queryTestClass(item.test_case_sk)));
 }
 

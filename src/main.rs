@@ -143,6 +143,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(prometheus.clone())
             .wrap(TracingLogger)
             // static files
+            .data(web::JsonConfig::default().limit(1024 * 1024 * 50))
             .data(database_pool.clone())
             .service(Files::new("/static", "./static/").index_file("index.html"))
             // redirect
@@ -189,6 +190,10 @@ async fn main() -> std::io::Result<()> {
             .route(
                 "/v1/test_case_class_suite_from_test_case",
                 web::get().to(routes::test_case_class_suite_from_test_case),
+            )
+            .route(
+                "/v1/test_case_class_suite_list_from_test_case_list",
+                web::post().to(routes::test_case_class_suite_list_from_test_case_list),
             )
             // register favicon
             .service(routes::favicon)

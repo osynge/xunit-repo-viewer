@@ -26,3 +26,14 @@ pub fn get_test_case_class_and_suite(
         None => Ok(None),
     }
 }
+
+pub fn get_test_case_list_class_and_suite(
+    conn: &DbConnection,
+    test_case_list_sk: &Vec<String>,
+) -> Result<Vec<Option<TestCase>>, diesel::result::Error> {
+    let mut output = Vec::new();
+    for item in test_case_list_sk.iter() {
+        output.push(get_test_case_class_and_suite(conn, item)?);
+    }
+    Ok(output)
+}
