@@ -1,32 +1,24 @@
-Vue.component('project', {
-    props: ['sk', 'human_name', 'id'],
-    methods: {
-        selectProject(item) {
-            this.$emit('select-project', item);
-        }
-    },
-    template: `
-    <div>
-        <button @click="selectProject(sk)">
-        {{ human_name }}
-        </button>
-    </div>
-    `
-});
-
-
 Vue.component('project-picker', {
     props: ['projects'],
+    data() {
+        return {
+            data: {
+                'project_selected': '',
+            }
+        }
+    },
     methods: {
-        selectProject(e) {
-            this.$emit('select-project', e);
+        selectProject() {
+            this.$emit('select-project', this.data.project_selected);
         }
     },
     template: `
     <div>
-          <li v-for="project in projects">
-          <project :sk="project.sk" :human_name="project.human_name" :id="project.identiifier" @select-project="selectProject"></project>
-        </li>
+        Project:
+        <select v-model="data.project_selected" @change="selectProject">
+            <option disabled value="">Please select</option>
+            <option v-for="project in projects" v-bind:value="project.sk">{{project.human_name}}</option>
+        </select>
     </div>
     `
 });
