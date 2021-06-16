@@ -50,9 +50,7 @@ Vue.component('display-project-file', {
     props: ['results'],
     template: `
     <div>
-        <h2>display-project-file</h2>
-        {{results.directory}}
-        {{results.file_name}}
+        <h2>File: {{results.directory}}/{{results.file_name}}</h2>
         <span v-for="(value, propertyName) in results.suite">
         <display-project-suite :results="value" :name="propertyName"> </display-project-suite>
         </span>
@@ -64,7 +62,7 @@ Vue.component('display-project-run-test-results-run', {
     props: ['results'],
     template: `
     <div>
-        <h1>display-project-run-test-results-run</h1>
+        <h2>environment</h2>
         <table>
         <tr>
         <td>Key</td>
@@ -136,20 +134,20 @@ Vue.component('display-project-run-test-results', {
             </td>
             </tr>
         </table>
-        Failing:
-        <div>
+        <div v-if="test_results.fail.count > 0">
+        <h1>Failing:</h1>
             <display-project-run-test-results-type :results="test_results.fail"></display-project-run-test-results-type>
         </div>
-        Errors:
-        <div>
+        <div v-if="test_results.error.count > 0">
+        <h1>Errors:</h1>
         <display-project-run-test-results-type :results="test_results.error"></display-project-run-test-results-type>
         </div>
-        Skipped:
-        <div>
+        <div v-if="test_results.skip.count > 0">
+        <h1>Skipped:</h1>
         <display-project-run-test-results-type :results="test_results.skip"></display-project-run-test-results-type>
         </div>
-        Pass:
-        <div>
+        <div v-if="test_results.pass.count > 0">
+        <h1>Pass:</h1>
         <display-project-run-test-results-type :results="test_results.pass"></display-project-run-test-results-type>
         </div>
     </div>
