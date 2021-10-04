@@ -17,7 +17,8 @@ serde_json = "1.0"
 anyhow = "1.0"
 chrono = "0.4.15"
 uuid = { version = "0.8", features = ["serde", "v4"] }
-xunit_repo_db = { git = "https://github.com/osynge/xunit-repo-db.git", branch = "main" }
+# xunit_repo_db = { git = "https://github.com/osynge/xunit-repo-db.git", branch = "main" }
+xunit_repo_db = { path = "../xunit-repo-db", features = ["postgres"] }
 diesel_migrations = "1.4.0"
 clap = "2"
 log = "*"

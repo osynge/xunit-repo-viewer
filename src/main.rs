@@ -11,8 +11,7 @@ use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::{EnvFilter, Registry};
-use xunit_repo_db;
-use xunit_repo_db::db;
+use xunit_repo_db::establish_connection_pool;
 use xunit_repo_db::schema;
 mod plumbing;
 pub type DbConnection = SqliteConnection;
@@ -130,7 +129,7 @@ async fn main() -> std::io::Result<()> {
         None => false,
     };
 
-    let database_pool = match db::establish_connection_pool(&database_url, migrate) {
+    let database_pool = match establish_connection_pool(&database_url, migrate) {
         Ok(pool) => pool,
         Err(err) => {
             let custom_error = std::io::Error::new(std::io::ErrorKind::Other, err);
