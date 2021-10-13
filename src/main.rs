@@ -4,19 +4,16 @@ extern crate log;
 mod model;
 mod routes;
 use actix_web_prom::PrometheusMetrics;
-use diesel::r2d2::{self, ConnectionManager};
-use diesel::SqliteConnection;
 use tracing_actix_web::TracingLogger;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::{EnvFilter, Registry};
 use xunit_repo_db;
-use xunit_repo_db::db;
 use xunit_repo_db::schema;
 mod plumbing;
-pub type DbConnection = SqliteConnection;
-pub type Pool = r2d2::Pool<ConnectionManager<DbConnection>>;
+pub type DbConnection = xunit_repo_db::DbConnection;
+pub type Pool = xunit_repo_db::Pool;
 use actix_files::Files;
 use actix_web::http::header;
 use actix_web::{guard, web, App, HttpRequest, HttpResponse, HttpServer};
@@ -130,7 +127,7 @@ async fn main() -> std::io::Result<()> {
         None => false,
     };
 
-    let database_pool = match db::establish_connection_pool(&database_url, migrate) {
+    let database_pool = match xunit_repo_db::establish_connection_pool(&database_url, migrate) {
         Ok(pool) => pool,
         Err(err) => {
             let custom_error = std::io::Error::new(std::io::ErrorKind::Other, err);
