@@ -147,9 +147,9 @@ async fn main() -> std::io::Result<()> {
             .service(Files::new("/static", "./static/").index_file("index.html"))
             // redirect
             .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
-                println!("{:?}", req);
+                let path = format!("static/welcome.html?{}", req.query_string());
                 HttpResponse::Found()
-                    .header(header::LOCATION, "static/welcome.html")
+                    .header(header::LOCATION, path)
                     .finish()
             })))
             .route("/v1/project/all", web::get().to(routes::project_get_all))
