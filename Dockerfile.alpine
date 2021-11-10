@@ -1,10 +1,14 @@
-FROM ekidd/rust-musl-builder:stable as builder
+FROM alpine:latest as builder
+
+RUN apk update \
+    && apk add --no-cache ca-certificates tzdata cargo rust postgresql-dev \
+    && rm -rf /var/cache/apk/*
 
 WORKDIR /app
-ADD --chown=rust:rust . /app/xunit-repo-viewer
+ADD . /app/xunit-repo-viewer
 WORKDIR /app/xunit-repo-viewer
 RUN rm -rf target Cargo.lock
-RUN cargo build --release --features=libsqlite3-sys
+RUN cargo build --release
 
 FROM alpine:latest
 
@@ -19,10 +23,10 @@ RUN addgroup -S $APP_USER \
     && adduser -S -g $APP_USER $APP_USER
 
 RUN apk update \
-    && apk add --no-cache ca-certificates tzdata \
+    && apk add --no-cache ca-certificates tzdata libpq libgcc\
     && rm -rf /var/cache/apk/*
 
-COPY --from=builder /app/xunit-repo-viewer/target/x86_64-unknown-linux-musl/release/xunit_repo_viewer ${APP}/xunit_repo_viewer
+COPY --from=builder /app/xunit-repo-viewer/target/release/xunit_repo_viewer ${APP}/xunit_repo_viewer
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
